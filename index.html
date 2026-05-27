@@ -482,7 +482,7 @@ eyJ2ZXJzaW9uIjoiMi4wIiwidG90YWxRdWVzdGlvbnMiOjU4NzQsImNhdGVnb3JpZXMiOlt7ImlkIjoi
 (function(){
   try {
     var b64 = document.getElementById("quiz-data").textContent.trim();
-    var json = atob(b64);
+    var json = decodeURIComponent(escape(atob(b64)));
     window.QUESTION_BANK = JSON.parse(json);
     document.getElementById("loadingScreen").style.display = "none";
     init();
@@ -491,7 +491,6 @@ eyJ2ZXJzaW9uIjoiMi4wIiwidG90YWxRdWVzdGlvbnMiOjU4NzQsImNhdGVnb3JpZXMiOlt7ImlkIjoi
     if(ls) ls.innerHTML =      '<div style="font-size:48px;margin-bottom:16px">&#9888;</div>' +
      '<div style="font-size:16px;font-weight:600;margin-bottom:8px">数据加载失败</div>' +
      '<div style="font-size:13px;margin-bottom:4px">' + e.message + '</div>' +
-     '<div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">JSON length: ' + b64.length + ' chars</div>' +
      '<button class="btn btn-primary" onclick="location.reload()" style="min-height:44px">&#8635; 重新加载</button>';
   }
 })();
