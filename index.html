@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="安B刷题">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#2563eb">
+<link rel="manifest" href="/manifest.json">
+<title>安B考试刷题练习</title>
+<style>
+/* ========== Reset & Variables ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+  --primary:#2563eb;--primary-light:#eff6ff;--primary-dark:#1d4ed8;
+  --success:#16a34a;--success-bg:#f0fdf4;--success-border:#bbf7d0;
+  --danger:#dc2626;--danger-bg:#fef2f2;--danger-border:#fecaca;
+  --warning:#f59e0b;--warning-bg:#fffbeb;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;
+  --radius:10px;--radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+  --max-w:800px;
+  /* light mode defaults */
+  --bg:#f1f5f9;--card-bg:#fff;--card-border:transparent;
+  --text:#1f2937;--text-secondary:#6b7280;--text-muted:#9ca3af;
+  --header-bg:#fff;--header-border:#e5e7eb;
+  --input-bg:#fff;--input-border:#d1d5db;
+  --option-hover:#eff6ff;--option-bg:#fff;
+  --modal-overlay:rgba(0,0,0,.4);
+}
+[data-theme="dark"]{
+  --bg:#0f172a;--card-bg:#1e293b;--card-border:rgba(255,255,255,.06);
+  --text:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;
+  --header-bg:#1e293b;--header-border:rgba(255,255,255,.08);
+  --input-bg:#1e293b;--input-border:#334155;
+  --option-hover:rgba(37,99,235,.15);--option-bg:#1e293b;
+  --modal-overlay:rgba(0,0,0,.7);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --gray-50:#1e293b;--gray-100:#1e293b;--gray-200:#334155;
+  --gray-300:#475569;--gray-400:#64748b;--gray-500:#94a3b8;
+  --gray-600:#94a3b8;--gray-700:#cbd5e1;--gray-800:#e2e8f0;--gray-900:#f1f5f9;
+  --primary-light:rgba(37,99,235,.15);
+}
+html,body{
+  height:100%;overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:none;
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.6;
+  padding-top:var(--safe-top);
+  transition:background .4s,color .4s;
+}
+
+/* ========== Header ========== */
+.app-header{
+  background:var(--header-bg);border-bottom:1px solid var(--header-border);
+  padding:10px 16px;position:sticky;top:var(--safe-top);z-index:100;
+  box-shadow:var(--shadow);
+  padding-left:max(16px,var(--safe-left));
+  padding-right:max(16px,var(--safe-right));
+  transition:background .4s,border-color .4s;
+}
+.header-inner{
+  max-width:var(--max-w);margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.header-title{
+  font-size:17px;font-weight:700;color:var(--text);
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  -webkit-tap-highlight-color:transparent;
+}
+.header-title .icon{font-size:22px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.theme-toggle{
+  width:36px;height:36px;border-radius:50%;border:2px solid var(--gray-200);
+  background:var(--card-bg);cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .3s;padding:0;line-height:1;
+}
+.theme-toggle:active{transform:scale(.9)}
+
+/* ========== Buttons ========== */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 16px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:500;cursor:pointer;
+  border:1px solid transparent;transition:all .15s;
+  white-space:nowrap;-webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;min-height:36px;
+}
+.btn:active{transform:scale(.96);opacity:.8}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:active{background:var(--primary-dark)}
+.btn-outline{background:var(--card-bg);border-color:var(--gray-300);color:var(--text-secondary)}
+.btn-outline:active{background:var(--gray-50);border-color:var(--gray-400)}
+.btn-sm{padding:5px 10px;font-size:13px;min-height:30px}
+.btn-lg{padding:12px 24px;font-size:16px;font-weight:600;min-height:44px}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:active{background:#b91c1c}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:active{background:#15803d}
+.btn:disabled{opacity:.4;pointer-events:none}
+
+/* ========== Main Content ========== */
+.main-container{
+  max-width:var(--max-w);margin:0 auto;padding:12px;
+  padding-left:max(12px,var(--safe-left));
+  padding-right:max(12px,var(--safe-right));
+  padding-bottom:calc(24px + var(--safe-bottom));
+}
+
+/* ========== Cards ========== */
+.card{
+  background:var(--card-bg);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;margin-bottom:12px;
+  border:1px solid var(--card-border);
+  transition:background .4s,border-color .4s,box-shadow .4s;
+}
+.card-header{font-size:16px;font-weight:600;margin-bottom:12px;color:var(--gray-900)}
+
+/* ========== Home ========== */
+.home-stats{
+  text-align:center;padding:24px 16px;margin-bottom:16px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;border-radius:var(--radius);
+}
+.home-stats .total{font-size:40px;font-weight:800}
+.home-stats .label{font-size:14px;opacity:.85;margin-top:4px}
+.home-stats .sub{font-size:13px;opacity:.7;margin-top:8px}
+
+.category-grid{display:grid;gap:10px}
+.category-card{
+  background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:16px 18px;cursor:pointer;transition:all .2s;
+  border:2px solid var(--card-border);position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.category-card:active{transform:scale(.985)}
+.category-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.category-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary),#818cf8,#a78bfa);
+  opacity:0;transition:opacity .3s;
+}
+.category-card:hover::before{opacity:1}
+.category-card .c-name{font-size:16px;font-weight:600;color:var(--text)}
+.category-card .c-meta{
+  display:flex;gap:10px;margin-top:6px;font-size:12px;color:var(--gray-500);
+  flex-wrap:wrap;
+}
+.category-card .c-meta span{display:flex;align-items:center;gap:3px}
+.category-card .c-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.category-card .c-progress{margin-top:8px}
+
+.progress-bar{
+  height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden;
+  margin-top:4px;
+}
+.progress-bar .fill{
+  height:100%;background:var(--success);border-radius:3px;transition:width .3s;
+}
+.progress-text{font-size:12px;color:var(--gray-500);margin-top:2px}
+
+/* ========== Question Card ========== */
+.quiz-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;flex-wrap:wrap;gap:8px;
+}
+.quiz-header .q-title{font-size:14px;font-weight:600;color:var(--gray-700)}
+.quiz-header .q-counter{font-size:14px;color:var(--gray-500);font-variant-numeric:tabular-nums}
+
+.quiz-progress{
+  height:4px;background:var(--gray-200);border-radius:2px;margin-bottom:14px;
+  overflow:hidden;
+}
+.quiz-progress .fill{
+  height:100%;background:var(--primary);border-radius:2px;transition:width .3s;
+}
+
+.q-stem{
+  font-size:16px;line-height:1.75;margin-bottom:14px;color:var(--gray-900);
+  font-weight:500;-webkit-text-size-adjust:100%;
+}
+.q-stem .q-badge{
+  display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;
+  margin-right:6px;font-weight:600;vertical-align:middle;
+}
+.badge-single{background:#dbeafe;color:#1d4ed8}
+.badge-multiple{background:#fef3c7;color:#b45309}
+.badge-judge{background:#fce7f3;color:#be185d}
+.badge-case{background:#e8f5e9;color:#2e7d32}
+
+.q-scenario{
+  background:var(--warning-bg);border:1px solid #fde68a;border-radius:var(--radius-sm);
+  padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.6;
+  color:var(--gray-700);
+}
+.q-scenario .s-label{font-weight:700;color:#b45309;margin-bottom:4px;font-size:12px}
+
+.q-image{
+  text-align:center;margin-bottom:14px;
+}
+.q-image img{
+  max-width:100%;max-height:320px;border-radius:var(--radius-sm);
+  border:1px solid var(--gray-200);object-fit:contain;
+  -webkit-user-select:none;pointer-events:none;
+}
+
+.options-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+
+.option-btn{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;border:2px solid var(--gray-200);border-radius:var(--radius);
+  cursor:pointer;transition:all .12s;background:var(--option-bg);
+  font-size:15px;line-height:1.5;text-align:left;width:100%;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  min-height:44px;
+}
+.option-btn:active{background:var(--option-hover);border-color:var(--primary)}
+.option-btn.selected{border-color:var(--primary);background:var(--primary-light);font-weight:600}
+.option-btn.correct{border-color:var(--success-border);background:var(--success-bg);color:#15803d}
+.option-btn.wrong{border-color:var(--danger-border);background:var(--danger-bg);color:#b91c1c}
+.option-btn.correct .opt-letter{background:var(--success);color:#fff}
+.option-btn.wrong .opt-letter{background:var(--danger);color:#fff}
+.option-btn.selected .opt-letter{background:var(--primary);color:#fff}
+
+.opt-letter{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;min-width:28px;
+  border-radius:50%;font-weight:700;font-size:14px;
+  background:var(--gray-100);color:var(--gray-600);
+  transition:all .12s;
+}
+
+.answer-reveal{
+  padding:12px 16px;border-radius:var(--radius);
+  margin-bottom:14px;font-size:14px;font-weight:600;
+}
+.answer-reveal.show-correct{background:var(--success-bg);border:1px solid var(--success-border);color:#15803d}
+.answer-reveal.show-wrong{background:var(--danger-bg);border:1px solid var(--danger-border);color:#b91c1c}
+
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ========== Swipe indicator ========== */
+.swipe-hint{
+  text-align:center;font-size:11px;color:var(--gray-400);margin-top:8px;
+  display:none;
+}
+@media(hover:none) and (pointer:coarse){
+  .swipe-hint{display:block}
+}
+
+/* ========== Exam Mode ========== */
+.exam-timer{
+  font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;
+  color:var(--primary);
+}
+.exam-timer.warning{color:var(--warning)}
+.exam-timer.danger{color:var(--danger);animation:pulse .8s infinite}
+@keyframes pulse{50%{opacity:.5}}
+
+.exam-setup .form-group{margin-bottom:14px}
+.exam-setup label{display:block;font-size:14px;font-weight:500;margin-bottom:5px;color:var(--gray-700)}
+.exam-setup select,.exam-setup input{
+  width:100%;padding:10px 14px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);
+  font-size:16px;background:var(--input-bg);color:var(--text);-webkit-appearance:none;appearance:none;
+  min-height:44px;
+}
+.exam-setup select:focus,.exam-setup input:focus{outline:none;border-color:var(--primary)}
+
+/* ========== Exam Result ========== */
+.result-card{text-align:center;padding:24px 16px}
+.result-score{font-size:56px;font-weight:800;color:var(--primary)}
+.result-score.perfect{color:var(--success)}
+.result-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin:16px 0}
+.result-detail{background:var(--gray-50);padding:12px 8px;border-radius:var(--radius-sm);text-align:center}
+.result-detail .num{font-size:20px;font-weight:700}
+.result-detail .lbl{font-size:11px;color:var(--gray-500);margin-top:2px}
+
+/* ========== Wrong Book ========== */
+.wrong-item{
+  padding:12px 14px;border-bottom:1px solid var(--gray-100);cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  min-height:44px;
+}
+.wrong-item:active{background:var(--gray-50)}
+.wrong-item .w-num{font-weight:600;color:var(--gray-400);min-width:24px;font-size:13px}
+.wrong-item .w-stem{flex:1;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrong-item .w-cat{font-size:11px;color:var(--gray-400);white-space:nowrap}
+.empty-state{text-align:center;padding:48px 20px;color:var(--gray-400)}
+.empty-state .icon{font-size:48px;margin-bottom:10px}
+.empty-state .msg{font-size:15px}
+
+/* ========== Answer Sheet Modal ========== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+}
+.modal{
+  background:var(--card-bg);border-radius:var(--radius);padding:20px;
+  max-width:480px;width:100%;max-height:80vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;transition:background .4s;
+}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:12px}
+.answer-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.answer-dot{
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;cursor:pointer;border:2px solid var(--gray-300);
+  background:#fff;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.answer-dot.answered{background:var(--primary);color:#fff;border-color:var(--primary)}
+.answer-dot:active{border-color:var(--primary)}
+
+/* ========== Toasts ========== */
+.toast{
+  position:fixed;top:calc(20px + var(--safe-top));left:50%;transform:translateX(-50%);
+  background:var(--gray-900);color:#fff;padding:10px 20px;
+  border-radius:20px;font-size:14px;z-index:300;
+  animation:toastIn .3s ease;
+  pointer-events:none;
+}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0}}
+
+/* ========== Filter tabs ========== */
+.filter-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filter-tab{
+  padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;
+  border:1px solid var(--gray-300);background:var(--card-bg);color:var(--text-secondary);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  min-height:32px;transition:all .2s;
+}
+.filter-tab:active{background:var(--gray-50)}
+.filter-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+.shuffle-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;color:var(--warning);font-weight:500;
+}
+
+/* ========== Responsive tweaks ========== */
+@media(max-width:480px){
+  .header-title{font-size:15px}
+  .btn{padding:6px 12px;font-size:13px;min-height:32px}
+  .btn-lg{min-height:44px}
+  .q-stem{font-size:15px}
+  .option-btn{font-size:14px;padding:11px 12px}
+  .opt-letter{width:24px;height:24px;min-width:24px;font-size:12px}
+  .main-container{padding:8px}
+  .card{padding:14px}
+  .result-score{font-size:44px}
+  .category-card .c-actions .btn{flex:1;justify-content:center}
+  .exam-timer{font-size:16px}
+  .category-grid{gap:8px}
+}
+
+/* ========== Search ========== */
+.search-wrapper{position:relative;margin-bottom:12px}
+.search-wrapper input{
+  width:100%;padding:12px 16px 12px 40px;border:2px solid var(--gray-200);
+  border-radius:24px;font-size:15px;background:var(--input-bg);color:var(--text);
+  transition:all .2s;outline:none;min-height:44px;
+}
+.search-wrapper input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.search-wrapper .s-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.5}
+.search-wrapper .s-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;font-size:18px;cursor:pointer;opacity:.4;color:var(--text);
+  display:none;padding:4px 8px}
+.search-wrapper .s-clear:active{opacity:.7}
+
+/* ========== Stats Dashboard ========== */
+.stats-hero{
+  text-align:center;padding:24px 16px;border-radius:var(--radius);
+  background:linear-gradient(135deg,var(--primary),#7c3aed);
+  color:#fff;margin-bottom:14px;
+}
+.stats-hero .hero-num{font-size:48px;font-weight:800;line-height:1.1}
+.stats-hero .hero-label{font-size:14px;opacity:.85;margin-top:6px}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.stat-box{
+  background:var(--card-bg);border-radius:var(--radius);padding:16px;
+  text-align:center;border:1px solid var(--card-border);transition:background .4s;
+}
+.stat-box .s-val{font-size:28px;font-weight:700;color:var(--primary)}
+.stat-box .s-lbl{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.stats-section{margin-bottom:16px}
+.stats-section h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px}
+.stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+.stat-row .sr-name{min-width:80px;font-size:12px;color:var(--text-secondary);text-align:right}
+.stat-row .sr-bar{flex:1;height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden}
+.stat-row .sr-fill{height:100%;border-radius:4px;transition:width .5s}
+.stat-row .sr-num{min-width:80px;font-size:12px;color:var(--text-secondary)}
+.fill-blue{background:linear-gradient(90deg,#2563eb,#3b82f6)}
+.fill-green{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.fill-purple{background:linear-gradient(90deg,#7c3aed,#a855f7)}
+.fill-orange{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+
+/* ========== Confetti ========== */
+#confettiCanvas{position:fixed;inset:0;z-index:9999;pointer-events:none}
+
+/* ========== Keyboard Shortcuts ========== */
+.kbd-grid{display:grid;gap:8px}
+.kbd-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--gray-200)}
+.kbd-row .kbd-desc{font-size:14px;color:var(--text)}
+.kbd-row .kbd-keys{display:flex;gap:4px;flex-shrink:0}
+.kbd-key{
+  display:inline-block;padding:3px 8px;font-size:12px;font-weight:600;
+  border-radius:4px;border:1px solid var(--gray-300);background:var(--gray-50);
+  color:var(--text);min-width:24px;text-align:center;font-family:inherit;
+}
+#kbdHint{position:fixed;bottom:max(12px,var(--safe-bottom));right:12px;
+  font-size:11px;color:var(--text-muted);opacity:.5;z-index:50}
+
+/* ========== View Transition ========== */
+#mainContent.view-switching{opacity:0;transform:translateY(6px);transition:all .2s}
+#mainContent{opacity:1;transform:none;transition:all .2s}
+
+/* ========== Utility ========== */
+.hidden{display:none!important}
+.text-center{text-align:center}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.mt-16{margin-top:16px}
+.mb-8{margin-bottom:8px}
+.mb-12{margin-bottom:12px}
+.flex-center{display:flex;align-items:center;justify-content:center}
+.gap-8{gap:8px}
+</style>
+</head>
+<body>
+
+<!-- ========== Header ========== -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-title" onclick="goHome()">
+      <span class="icon">📝</span> 安B考试刷题练习
+    </div>
+    <div class="header-actions" id="headerActions">
+      <button class="btn btn-outline btn-sm" onclick="showStats()">📊 统计</button>
+      <button class="btn btn-outline btn-sm" onclick="showWrongBook()">📋 错题本 <span id="wrongCount"></span></button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换暗色模式" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</header>
+
+<canvas id="confettiCanvas"></canvas>
+<div id="kbdHint">按 ? 查看快捷键</div>
+
+<!-- ========== Main Content ========== -->
+<div class="main-container" id="mainContent">
+  <div id="loadingScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;color:var(--gray-500)">
+    <div style="font-size:48px;margin-bottom:16px">📝</div>
+    <div style="font-size:16px;font-weight:600;margin-bottom:8px">加载题库数据中...</div>
+    <div style="font-size:13px" id="loadingProgress">0%</div>
+    <div style="width:200px;height:4px;background:var(--gray-200);border-radius:2px;margin-top:12px;overflow:hidden">
+      <div id="loadingBar" style="height:100%;background:var(--primary);border-radius:2px;width:0%;transition:width .3s"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Async Data Loading with Progress
+// ============================================================
+(function loadDataAsync() {
+  var script = document.createElement('script');
+  script.src = 'questions_data.js';
+  script.onload = function() {
+    document.getElementById('loadingScreen').style.display = 'none';
+    init();
+  };
+  script.onerror = function() {
+    document.getElementById('loadingScreen').innerHTML =
+      '<div style="font-size:48px;margin-bottom:16px">⚠️</div>' +
+      '<div style="font-size:16px;font-weight:600;margin-bottom:8px">加载失败</div>' +
+      '<div style="font-size:13px">请检查网络连接后刷新页面</div>' +
+      '<button class="btn btn-primary mt-16" onclick="location.reload()">🔄 重新加载</button>';
+  };
+  document.head.appendChild(script);
+
+  // Fake progress (since we can't track script download progress)
+  var bar = document.getElementById('loadingBar');
+  var prog = document.getElementById('loadingProgress');
+  var pct = 0;
+  var timer = setInterval(function() {
+    pct += Math.random() * 15 + 3;
+    if (pct > 90) { pct = 90; clearInterval(timer); }
+    bar.style.width = pct + '%';
+    prog.textContent = Math.round(pct) + '%';
+  }, 200);
+
+  // Save timer ref so onload can clear it
+  script._progressTimer = timer;
+  var origOnload = script.onload;
+  script.onload = function() {
+    clearInterval(timer);
+    bar.style.width = '100%';
+    prog.textContent = '100%';
+    setTimeout(function() { origOnload(); }, 200);
+  };
+})();
+</script>
+
+<script>
+// ============================================================
+// Storage Engine
+// ============================================================
+const STORAGE_KEY = 'anb_quiz_data_v2';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { progress: {}, wrongBook: [] };
+  } catch { return { progress: {}, wrongBook: [] }; }
+}
+
+function saveData(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+}
+
+function getProgress(catId) {
+  const data = loadData();
+  return data.progress[catId] || { doneIds: {}, correct: 0, total: 0 };
+}
+
+function recordAnswer(catId, globalId, isCorrect) {
+  const data = loadData();
+  if (!data.progress[catId]) data.progress[catId] = { doneIds: {}, correct: 0, total: 0 };
+  const prog = data.progress[catId];
+  if (!prog.doneIds[globalId]) {
+    prog.doneIds[globalId] = true;
+    prog.total++;
+    if (isCorrect) prog.correct++;
+  }
+  if (!isCorrect) {
+    const exists = data.wrongBook.find(w => w.id === globalId);
+    if (!exists) {
+      data.wrongBook.push({ id: globalId, catId, catName: getCatName(catId), time: Date.now() });
+    }
+  } else {
+    data.wrongBook = data.wrongBook.filter(w => w.id !== globalId);
+  }
+  saveData(data);
+  updateWrongCount();
+}
+
+function removeWrong(globalId) {
+  const data = loadData();
+  data.wrongBook = data.wrongBook.filter(w => w.id !== globalId);
+  saveData(data);
+  updateWrongCount();
+}
+
+function updateWrongCount() {
+  const data = loadData();
+  const el = document.getElementById('wrongCount');
+  if (el) {
+    const count = data.wrongBook.length;
+    el.textContent = count > 0 ? `(${count})` : '';
+  }
+}
+
+function getCatName(catId) {
+  if (!window.QUESTION_BANK) return '';
+  const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+  return cat ? cat.name : '';
+}
+
+function findQuestion(globalId) {
+  if (!window.QUESTION_BANK) return null;
+  for (const cat of window.QUESTION_BANK.categories) {
+    for (const q of cat.questions) {
+      if (q.globalId === globalId) return { ...q, catId: cat.id, catName: cat.name };
+    }
+  }
+  return null;
+}
+
+// ============================================================
+// Toast
+// ============================================================
+function showToast(msg, duration) {
+  duration = duration || 1500;
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 300);
+  }, duration);
+}
+
+// ============================================================
+// App State
+// ============================================================
+let appState = {
+  view: 'home',
+  catId: null,
+  questions: [],
+  currentIndex: 0,
+  selectedAnswer: null,
+  revealed: false,
+  isShuffled: false,
+  isExam: false,
+  examTimeLeft: 0,
+  examTimerId: null,
+  examAnswers: {},
+  wrongPracticeMode: false,
+};
+
+// ============================================================
+// Navigation
+// ============================================================
+function goHome() {
+  clearExamTimer();
+  appState = {
+    view: 'home', catId: null, questions: [], currentIndex: 0,
+    selectedAnswer: null, revealed: false, isShuffled: false,
+    isExam: false, examTimeLeft: 0, examTimerId: null, examAnswers: {},
+    wrongPracticeMode: false, _confettiLaunched: false
+  };
+  document.getElementById('headerActions').classList.remove('hidden');
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  const container = document.getElementById('mainContent');
+  switch (appState.view) {
+    case 'home': renderHomeView(container); break;
+    case 'stats': renderStatsView(container); break;
+    case 'practice':
+    case 'exam': renderPracticeView(container); break;
+    case 'examSetup': renderExamSetup(container); break;
+    case 'examResult': renderExamResult(container); break;
+    case 'wrongBook': renderWrongBook(container); break;
+  }
+}
+
+// ============================================================
+// Home View
+// ============================================================
+function renderHomeView(container) {
+  if (!window.QUESTION_BANK) {
+    container.innerHTML = '<div class="empty-state"><div class="msg">题库数据加载中...</div></div>';
+    return;
+  }
+  const bank = window.QUESTION_BANK;
+  const data = loadData();
+
+  let html = renderSearchBar();
+
+  html += '<div class="home-stats">';
+  html += `<div class="total">${bank.totalQuestions}</div>`;
+  html += '<div class="label">总题量</div>';
+  html += `<div class="sub">${bank.categories.length} 个题库 | 支持练习/考试/错题本</div>`;
+  html += '</div>';
+
+  html += '<div class="category-grid">';
+  for (const cat of bank.categories) {
+    const prog = data.progress[cat.id] || { doneIds: {}, correct: 0, total: 0 };
+    const doneCount = Object.keys(prog.doneIds).length;
+    const pct = cat.questionCount > 0 ? Math.round(doneCount / cat.questionCount * 100) : 0;
+    const correctPct = prog.total > 0 ? Math.round(prog.correct / prog.total * 100) : 0;
+    const imgCount = cat.questions.filter(q => q.hasImage).length;
+    const typeLabel = cat.type === 'single' ? '单选题' : cat.type === 'multiple' ? '多选题' : cat.type === 'judge' ? '判断题' : cat.type === 'case' ? '案例题' : '混合题型';
+
+    html += '<div class="category-card" onclick="event.stopPropagation()">';
+    html += `<div class="c-name">${cat.name}</div>`;
+    html += '<div class="c-meta">';
+    html += `<span>📄 ${cat.questionCount}题</span>`;
+    html += `<span>📌 ${typeLabel}</span>`;
+    if (imgCount > 0) html += `<span>🖼️ ${imgCount}图</span>`;
+    html += '</div>';
+    if (doneCount > 0) {
+      html += '<div class="c-progress">';
+      html += '<div class="progress-bar"><div class="fill" style="width:' + pct + '%"></div></div>';
+      html += `<div class="progress-text">已做 ${doneCount}/${cat.questionCount} (${pct}%)`;
+      if (prog.total > 0) html += ` · 正确率 ${correctPct}%`;
+      html += '</div></div>';
+    }
+    html += '<div class="c-actions">';
+    html += `<button class="btn btn-primary btn-sm" onclick="startPractice('${cat.id}')">📖 练习</button>`;
+    if (doneCount > 0 && doneCount < cat.questionCount) {
+      html += `<button class="btn btn-outline btn-sm" onclick="continuePractice('${cat.id}')" style="border-color:#f59e0b;color:#b45309">📍 继续</button>`;
+    }
+    html += `<button class="btn btn-outline btn-sm" onclick="startRandomPractice('${cat.id}')">🎲 随机</button>`;
+    html += `<button class="btn btn-outline btn-sm" onclick="showExamSetup('${cat.id}')">📝 考试</button>`;
+    if (doneCount > 0 && doneCount < cat.questionCount) {
+      html += `<button class="btn btn-outline btn-sm" onclick="startUnansweredPractice('${cat.id}')">🆕 未做</button>`;
+    }
+    html += '</div></div>';
+  }
+  html += '</div>';
+
+  // Quick actions
+  html += '<div class="card mt-12"><div class="card-header">快捷操作</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  html += '<button class="btn btn-outline" onclick="startAllRandomPractice()">🎲 全部随机</button>';
+  html += '<button class="btn btn-outline" onclick="startAllUnansweredPractice()">🆕 全部未做</button>';
+  html += '<button class="btn btn-outline" onclick="showExamSetup(\'all\')">📝 模拟考试</button>';
+  html += '<button class="btn btn-outline" onclick="showWrongBook()">📋 错题重做</button>';
+  html += '</div></div>';
+
+  container.innerHTML = html;
+  updateWrongCount();
+}
+
+// ============================================================
+// Practice Mode
+// ============================================================
+function startPractice(catId, questionsOverride, startIndex) {
+  const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+  const questions = questionsOverride || (cat ? cat.questions : []);
+  if (!questions.length) { showToast('该题库没有题目'); return; }
+
+  document.getElementById('headerActions').classList.add('hidden');
+
+  const idx = (startIndex !== undefined) ? startIndex : 0;
+
+  appState = {
+    ...appState,
+    view: 'practice', catId, questions: [...questions],
+    currentIndex: idx, selectedAnswer: null, revealed: false,
+    isShuffled: false, isExam: false, examAnswers: {},
+    examTimeLeft: 0, examTimerId: null, wrongPracticeMode: !!questionsOverride,
+  };
+
+  renderCurrentView();
+}
+
+function findFirstUnanswered(catId) {
+  const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+  if (!cat) return 0;
+  const data = loadData();
+  const prog = data.progress[catId];
+  if (!prog) return 0;
+  for (let i = 0; i < cat.questions.length; i++) {
+    if (!prog.doneIds[cat.questions[i].globalId]) return i;
+  }
+  return 0;
+}
+
+function continuePractice(catId) {
+  const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+  if (!cat) return;
+  const startIdx = findFirstUnanswered(catId);
+  startPractice(catId, null, startIdx);
+  appState._continueMode = true;
+  showToast('从第 ' + (startIdx + 1) + ' 题继续');
+}
+
+function startUnansweredPractice(catId) {
+  const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+  if (!cat) return;
+  const data = loadData();
+  const prog = data.progress[catId];
+  const unanswered = cat.questions.filter(q => {
+    return !prog || !prog.doneIds[q.globalId];
+  });
+  if (!unanswered.length) {
+    showToast('已全部完成！');
+    return;
+  }
+  startPractice(catId, unanswered, 0);
+  appState._unansweredMode = true;
+  showToast('筛选 ' + unanswered.length + ' 道未做题');
+}
+
+function startRandomPractice(catId) {
+  const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+  if (!cat) return;
+  const shuffled = [...cat.questions].sort(() => Math.random() - 0.5);
+  startPractice(catId, shuffled);
+  appState.isShuffled = true;
+}
+
+function startAllRandomPractice() {
+  let all = [];
+  for (const cat of window.QUESTION_BANK.categories) {
+    all = all.concat(cat.questions);
+  }
+  all.sort(() => Math.random() - 0.5);
+  startPractice('all', all);
+  appState.isShuffled = true;
+}
+
+function startAllUnansweredPractice() {
+  const data = loadData();
+  let all = [];
+  for (const cat of window.QUESTION_BANK.categories) {
+    const prog = data.progress[cat.id];
+    for (const q of cat.questions) {
+      if (!prog || !prog.doneIds[q.globalId]) {
+        all.push(q);
+      }
+    }
+  }
+  if (!all.length) { showToast('已全部完成！'); return; }
+  all.sort(() => Math.random() - 0.5);
+  startPractice('all', all);
+  appState.isShuffled = true;
+  showToast('筛选 ' + all.length + ' 道未做题');
+}
+
+function renderPracticeView(container) {
+  const qs = appState.questions;
+  const idx = appState.currentIndex;
+
+  if (idx >= qs.length) {
+    if (appState.isExam) { finishExam(); return; }
+    if (!appState._confettiLaunched) {
+      appState._confettiLaunched = true;
+      launchConfetti();
+    }
+    container.innerHTML = '<div class="card text-center"><div class="empty-state"><div class="icon">🎉</div><div class="msg">全部完成！</div><button class="btn btn-primary mt-16" onclick="goHome()">返回首页</button></div></div>';
+    return;
+  }
+
+  const q = qs[idx];
+  const total = qs.length;
+  let html = '';
+
+  // Header (timer for exam, title for practice)
+  if (appState.isExam && appState.examTimeLeft > 0) {
+    const mins = Math.floor(appState.examTimeLeft / 60);
+    const secs = appState.examTimeLeft % 60;
+    const timerClass = appState.examTimeLeft < 60 ? 'danger' : appState.examTimeLeft < 300 ? 'warning' : '';
+    html += `<div class="quiz-header"><div class="exam-timer ${timerClass}">⏱ ${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</div>`;
+    html += `<div class="q-counter">${idx+1}/${total}</div></div>`;
+  } else {
+    let modeIcon, modeLabel;
+    if (appState.wrongPracticeMode && !appState._unansweredMode) {
+      modeIcon = '📋'; modeLabel = '错题重做';
+    } else if (appState._unansweredMode) {
+      modeIcon = '🆕'; modeLabel = '未做题模式';
+    } else if (appState._continueMode) {
+      modeIcon = '📍'; modeLabel = '练习模式（继续）';
+    } else {
+      modeIcon = '📖'; modeLabel = '练习模式';
+    }
+    html += `<div class="quiz-header"><div class="q-title">${modeIcon} ${modeLabel}`;
+    if (appState.isShuffled) html += ' <span class="shuffle-badge">🔀 随机</span>';
+    html += `</div><div class="q-counter">${idx+1} / ${total}</div></div>`;
+  }
+
+  // Progress bar
+  const pct = total > 0 ? Math.round((idx + 1) / total * 100) : 100;
+  html += `<div class="quiz-progress"><div class="fill" style="width:${pct}%"></div></div>`;
+
+  // Question type badge
+  const typeBadge = q.type === 'single' ? '<span class="q-badge badge-single">单选</span>' :
+                    q.type === 'multiple' ? '<span class="q-badge badge-multiple">多选</span>' :
+                    q.type === 'case' ? '<span class="q-badge badge-case">案例</span>' :
+                    '<span class="q-badge badge-judge">判断</span>';
+
+  // Stem
+  html += `<div class="q-stem">${typeBadge} ${idx+1}. ${escapeHtml(q.stem)}</div>`;
+
+  // Scenario (for case study sub-questions)
+  if (q.scenario) {
+    html += '<div class="q-scenario"><div class="s-label">📋 案例背景</div>' + escapeHtml(q.scenario) + '</div>';
+  }
+
+  // Image
+  if (q.hasImage && q.image) {
+    html += '<div class="q-image"><img src="' + escapeHtml(q.image) + '" alt="题目图片" onerror="this.style.display=\'none\'" loading="lazy"></div>';
+  }
+
+  // Options
+  const isMultiple = q.type === 'multiple';
+  const selectedSet = isMultiple ? new Set(appState.selectedAnswer || []) : null;
+
+  html += '<div class="options-list">';
+  const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let i = 0; i < q.options.length; i++) {
+    const opt = q.options[i];
+    const letter = labels[i] || String(i);
+    let cls = 'option-btn';
+    if (appState.revealed) {
+      const correctAnswers = q.answer.toUpperCase().split('');
+      const isCorrect = correctAnswers.includes(letter);
+      if (isCorrect) cls += ' correct';
+      if (isMultiple) {
+        if (selectedSet && selectedSet.has(letter) && !isCorrect) cls += ' wrong';
+      } else {
+        if (appState.selectedAnswer === letter && !isCorrect) cls += ' wrong';
+      }
+    } else {
+      if (isMultiple) {
+        if (selectedSet && selectedSet.has(letter)) cls += ' selected';
+      } else {
+        if (appState.selectedAnswer === letter) cls += ' selected';
+      }
+    }
+    html += `<div class="${cls}" onclick="selectAnswer('${letter}', ${isMultiple})" id="opt-${letter}">`;
+    html += `<span class="opt-letter">${letter}</span>`;
+    html += `<span>${escapeHtml(opt)}</span>`;
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // Answer reveal
+  if (appState.revealed) {
+    const isCorrect = checkAnswerCorrect(q, appState.selectedAnswer);
+    const cls = isCorrect ? 'show-correct' : 'show-wrong';
+    html += `<div class="answer-reveal ${cls}">`;
+    html += isCorrect ? '✅ 回答正确！' : '❌ 回答错误！';
+    html += ` 正确答案：<strong>${q.answer}</strong>`;
+    html += '</div>';
+  }
+
+  // Navigation buttons
+  html += '<div class="quiz-nav">';
+  html += `<button class="btn btn-outline" onclick="prevQuestion()" ${idx===0?'disabled':''}>◀ 上一题</button>`;
+
+  if (isMultiple && !appState.revealed) {
+    html += `<button class="btn btn-primary" onclick="confirmMultipleAnswer()" ${!appState.selectedAnswer||appState.selectedAnswer.length===0?'disabled':''}>确认答案</button>`;
+  }
+
+  if (appState.revealed) {
+    html += `<button class="btn btn-primary" onclick="nextQuestion()">${idx >= qs.length - 1 ? '完成' : '下一题 ▶'}</button>`;
+  } else if (!isMultiple) {
+    html += '<div></div>';
+  } else {
+    html += '<div></div>';
+  }
+  html += '</div>';
+
+  // Swipe hint (touch devices only)
+  if (qs.length > 1) {
+    html += '<div class="swipe-hint">← 左右滑动切换题目 →</div>';
+  }
+
+  // Exam: answer sheet
+  if (appState.isExam) {
+    html += '<div class="card mt-12"><div style="display:flex;align-items:center;justify-content:space-between">';
+    html += '<span style="font-size:13px;color:var(--gray-500)">答题卡</span>';
+    html += `<button class="btn btn-outline btn-sm" onclick="showAnswerSheet()">📋 查看</button>`;
+    html += '</div>';
+    html += '<div class="answer-grid mt-8">';
+    for (let i = 0; i < qs.length; i++) {
+      const gid = qs[i].globalId;
+      const answered = !!appState.examAnswers[gid];
+      html += `<span class="answer-dot ${answered?'answered':''}" onclick="jumpToQuestion(${i})">${i+1}</span>`;
+    }
+    html += '</div></div>';
+  }
+
+  // Exam submit button
+  if (appState.isExam) {
+    html += '<div class="text-center mt-12">';
+    const answeredCount = Object.keys(appState.examAnswers).length;
+    html += `<button class="btn btn-danger btn-lg" onclick="submitExam()">📝 交卷 (已答 ${answeredCount}/${total})</button>`;
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+
+  // Setup swipe for this card
+  setupSwipe(container);
+}
+
+function selectAnswer(letter, isMultiple) {
+  if (appState.revealed) return;
+
+  if (isMultiple) {
+    let selected = appState.selectedAnswer || [];
+    if (selected.includes(letter)) {
+      selected = selected.filter(l => l !== letter);
+    } else {
+      selected = [...selected, letter].sort();
+    }
+    appState.selectedAnswer = selected.length > 0 ? selected : null;
+  } else {
+    appState.selectedAnswer = letter;
+    appState.revealed = true;
+    const q = appState.questions[appState.currentIndex];
+    const isCorrect = checkAnswerCorrect(q, letter);
+    if (!appState.isExam) {
+      recordAnswer(appState.catId, q.globalId, isCorrect);
+    }
+    if (appState.isExam) {
+      appState.examAnswers[q.globalId] = letter;
+    }
+  }
+
+  renderCurrentView();
+}
+
+function confirmMultipleAnswer() {
+  if (appState.revealed || !appState.selectedAnswer || appState.selectedAnswer.length === 0) return;
+  appState.revealed = true;
+  const q = appState.questions[appState.currentIndex];
+  const answerStr = appState.selectedAnswer.join('');
+  const isCorrect = checkAnswerCorrect(q, answerStr);
+  if (!appState.isExam) {
+    recordAnswer(appState.catId, q.globalId, isCorrect);
+  }
+  if (appState.isExam) {
+    appState.examAnswers[q.globalId] = answerStr;
+  }
+  renderCurrentView();
+}
+
+function checkAnswerCorrect(q, userAnswer) {
+  if (!userAnswer) return false;
+  const correct = q.answer.toUpperCase().replace(/\s/g, '');
+  const user = Array.isArray(userAnswer) ? userAnswer.join('').toUpperCase() : userAnswer.toUpperCase();
+  return correct === user;
+}
+
+function confirmAnswer() {
+  if (!appState.selectedAnswer) return;
+  var q = appState.questions[appState.currentIndex];
+  if (!q) return;
+  if (q.type === 'multiple' && !appState.revealed) {
+    confirmMultipleAnswer();
+  } else if (!appState.revealed) {
+    appState.revealed = true;
+    var isCorrect = checkAnswerCorrect(q, appState.selectedAnswer);
+    if (!appState.isExam) { recordAnswer(appState.catId, q.globalId, isCorrect); }
+    if (appState.isExam) { appState.examAnswers[q.globalId] = appState.selectedAnswer; }
+    renderCurrentView();
+  }
+}
+}
+
+function prevQuestion() {
+  if (appState.currentIndex > 0) {
+    appState.currentIndex--;
+    appState.selectedAnswer = null;
+    appState.revealed = false;
+    renderCurrentView();
+  }
+}
+
+function nextQuestion() {
+  if (appState.currentIndex < appState.questions.length - 1) {
+    appState.currentIndex++;
+    appState.selectedAnswer = null;
+    appState.revealed = false;
+    renderCurrentView();
+  } else {
+    if (appState.isExam) {
+      finishExam();
+    } else {
+      appState.currentIndex++;
+      renderCurrentView();
+    }
+  }
+}
+
+function jumpToQuestion(index) {
+  appState.currentIndex = index;
+  appState.selectedAnswer = null;
+  appState.revealed = false;
+  const q = appState.questions[index];
+  if (appState.isExam && appState.examAnswers[q.globalId]) {
+    const ans = appState.examAnswers[q.globalId];
+    appState.selectedAnswer = q.type === 'multiple' ? ans.split('') : ans;
+    appState.revealed = true;
+  }
+  renderCurrentView();
+}
+
+// ============================================================
+// Swipe Navigation (iOS/iPhone optimized)
+// ============================================================
+function setupSwipe(container) {
+  let startX = 0;
+  let startY = 0;
+  let swiped = false;
+
+  const card = container.querySelector('.card') || container;
+
+  const onTouchStart = function(e) {
+    if (e.target.closest('.modal-overlay')) return;
+    if (e.target.closest('.option-btn')) return;
+    if (e.target.closest('button')) return;
+    if (e.target.closest('.answer-dot')) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiped = false;
+  };
+
+  const onTouchEnd = function(e) {
+    if (swiped) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    // Must be more horizontal than vertical, and over threshold
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+      swiped = true;
+      if (dx < 0) {
+        nextQuestion();
+      } else {
+        prevQuestion();
+      }
+    }
+  };
+
+  // Remove old listeners (re-attach)
+  container.ontouchstart = onTouchStart;
+  container.ontouchend = onTouchEnd;
+}
+
+// ============================================================
+// Exam Mode
+// ============================================================
+function showExamSetup(catId) {
+  appState.catId = catId;
+  appState.view = 'examSetup';
+  renderCurrentView();
+}
+
+function renderExamSetup(container) {
+  let html = '<div class="card"><div class="card-header">📝 模拟考试设置</div>';
+  html += '<div class="exam-setup">';
+
+  const catId = appState.catId;
+  const cat = catId === 'all' ? null : window.QUESTION_BANK.categories.find(c => c.id === catId);
+  const maxQ = cat ? cat.questionCount : window.QUESTION_BANK.totalQuestions;
+
+  html += '<div class="form-group"><label>题量</label>';
+  html += `<select id="examCount"><option value="20">20题</option><option value="50">50题</option><option value="100" selected>100题</option><option value="${Math.min(200, maxQ)}">${Math.min(200, maxQ)}题</option></select></div>`;
+
+  html += '<div class="form-group"><label>时间限制（分钟）</label>';
+  html += '<select id="examTime"><option value="30">30分钟</option><option value="60" selected>60分钟</option><option value="90">90分钟</option><option value="120">120分钟</option><option value="0">不限时</option></select></div>';
+
+  html += '<div class="form-group"><label>题库</label>';
+  html += `<input type="text" value="${cat ? cat.name : '全部题库'}" disabled style="color:var(--gray-500)">`;
+  html += '</div>';
+
+  html += '<button class="btn btn-primary btn-lg" style="width:100%" onclick="startExam()">🚀 开始考试</button>';
+  html += '<button class="btn btn-outline mt-8" style="width:100%" onclick="goHome()">返回</button>';
+
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function startExam() {
+  const count = parseInt(document.getElementById('examCount').value);
+  const timeMin = parseInt(document.getElementById('examTime').value);
+
+  let pool = [];
+  const catId = appState.catId;
+  if (catId === 'all') {
+    for (const cat of window.QUESTION_BANK.categories) {
+      pool = pool.concat(cat.questions);
+    }
+  } else {
+    const cat = window.QUESTION_BANK.categories.find(c => c.id === catId);
+    pool = cat ? cat.questions : [];
+  }
+
+  pool = [...pool].sort(() => Math.random() - 0.5);
+  const questions = pool.slice(0, Math.min(count, pool.length));
+
+  document.getElementById('headerActions').classList.add('hidden');
+
+  appState = {
+    ...appState,
+    view: 'exam', catId, questions, currentIndex: 0,
+    selectedAnswer: null, revealed: false, isShuffled: true,
+    isExam: true, examAnswers: {},
+    examTimeLeft: timeMin > 0 ? timeMin * 60 : 0,
+    examTimerId: null, wrongPracticeMode: false,
+  };
+
+  if (appState.examTimeLeft > 0) {
+    startExamTimer();
+  }
+
+  renderCurrentView();
+}
+
+function startExamTimer() {
+  clearExamTimer();
+  appState.examTimerId = setInterval(() => {
+    appState.examTimeLeft--;
+    if (appState.view === 'exam') {
+      // Only update timer text without full re-render
+      const timerEl = document.querySelector('.exam-timer');
+      if (timerEl) {
+        const mins = Math.floor(appState.examTimeLeft / 60);
+        const secs = appState.examTimeLeft % 60;
+        timerEl.textContent = `⏱ ${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+        timerEl.className = 'exam-timer ' + (appState.examTimeLeft < 60 ? 'danger' : appState.examTimeLeft < 300 ? 'warning' : '');
+      }
+    }
+    if (appState.examTimeLeft <= 0) {
+      finishExam();
+    }
+  }, 1000);
+}
+
+function clearExamTimer() {
+  if (appState.examTimerId) { clearInterval(appState.examTimerId); appState.examTimerId = null; }
+}
+
+function showAnswerSheet() {
+  const qs = appState.questions;
+  let html = '<div class="modal-overlay" onclick="this.remove()"><div class="modal" onclick="event.stopPropagation()">';
+  html += '<div class="modal-title">📋 答题卡</div>';
+  html += '<div class="answer-grid">';
+  for (let i = 0; i < qs.length; i++) {
+    const gid = qs[i].globalId;
+    const answered = !!appState.examAnswers[gid];
+    html += `<span class="answer-dot ${answered?'answered':''}" onclick="document.querySelector('.modal-overlay').remove();jumpToQuestion(${i})">${i+1}</span>`;
+  }
+  html += '</div>';
+  html += `<div style="margin-top:12px;font-size:13px;color:var(--gray-500);text-align:center">已回答: ${Object.keys(appState.examAnswers).length} / ${qs.length}</div>`;
+  html += '<button class="btn btn-outline mt-12" style="width:100%" onclick="this.closest(\'.modal-overlay\').remove()">关闭</button>';
+  html += '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function submitExam() {
+  if (confirm('确定要交卷吗？未答的题目将计为错误。')) {
+    finishExam();
+  }
+}
+
+function finishExam() {
+  clearExamTimer();
+  appState.view = 'examResult';
+  appState.isExam = false;
+
+  for (const q of appState.questions) {
+    const userAns = appState.examAnswers[q.globalId] || '';
+    const isCorrect = checkAnswerCorrect(q, userAns);
+    recordAnswer(appState.catId, q.globalId, isCorrect);
+  }
+
+  renderCurrentView();
+}
+
+function renderExamResult(container) {
+  const qs = appState.questions;
+  let correctCount = 0;
+  let wrongCount = 0;
+  let unanswered = 0;
+
+  const details = qs.map(q => {
+    const userAns = appState.examAnswers[q.globalId] || '';
+    const isCorrect = checkAnswerCorrect(q, userAns);
+    if (!userAns) unanswered++;
+    else if (isCorrect) correctCount++;
+    else wrongCount++;
+    return { q, userAns: userAns || '(未作答)', isCorrect };
+  });
+
+  const score = qs.length > 0 ? Math.round(correctCount / qs.length * 100) : 0;
+  const scoreClass = score >= 90 ? 'perfect' : '';
+  const emoji = score >= 90 ? '🎉' : score >= 60 ? '👍' : '💪';
+
+  let html = '<div class="card result-card">';
+  html += `<div style="font-size:40px;margin-bottom:4px">${emoji}</div>`;
+  html += '<div style="font-size:18px;font-weight:600;margin-bottom:8px">考试成绩</div>';
+  html += `<div class="result-score ${scoreClass}">${score}<span style="font-size:24px">分</span></div>`;
+  html += '<div class="result-details">';
+  html += `<div class="result-detail"><div class="num" style="color:var(--success)">${correctCount}</div><div class="lbl">正确</div></div>`;
+  html += `<div class="result-detail"><div class="num" style="color:var(--danger)">${wrongCount}</div><div class="lbl">错误</div></div>`;
+  html += `<div class="result-detail"><div class="num" style="color:var(--gray-400)">${unanswered}</div><div class="lbl">未答</div></div>`;
+  html += `<div class="result-detail"><div class="num">${qs.length}</div><div class="lbl">总题</div></div>`;
+  html += '</div>';
+
+  html += '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">';
+  html += '<button class="btn btn-primary" onclick="goHome()">返回首页</button>';
+  html += '<button class="btn btn-outline" onclick="retakeWrongFromExam()">🔁 重做错题</button>';
+  html += '</div></div>';
+
+  window._examReview = details;
+
+  container.innerHTML = html;
+}
+
+function retakeWrongFromExam() {
+  if (!window._examReview) return;
+  const wrongQs = window._examReview.filter(d => !d.isCorrect).map(d => d.q);
+  if (wrongQs.length === 0) { showToast('全部正确！没有需要复习的题目'); return; }
+  startPractice(appState.catId, wrongQs);
+  appState.wrongPracticeMode = true;
+}
+
+// ============================================================
+// Wrong Book
+// ============================================================
+function showWrongBook() {
+  const data = loadData();
+  if (data.wrongBook.length === 0) {
+    const container = document.getElementById('mainContent');
+    container.innerHTML = '<div class="card"><div class="empty-state"><div class="icon">🎉</div><div class="msg">错题本为空，继续保持！</div><button class="btn btn-primary mt-16" onclick="goHome()">返回首页</button></div></div>';
+    appState.view = 'wrongBook';
+    return;
+  }
+  appState.view = 'wrongBook';
+  renderCurrentView();
+}
+
+function renderWrongBook(container) {
+  const data = loadData();
+  const wrongItems = [...data.wrongBook].reverse();
+
+  let html = '<div class="card"><div class="card-header">📋 错题本 <span style="font-weight:400;color:var(--gray-500);font-size:14px">(共 ' + wrongItems.length + ' 题)</span></div>';
+
+  html += '<div class="wrong-list">';
+  for (let i = 0; i < wrongItems.length; i++) {
+    const w = wrongItems[i];
+    const q = findQuestion(w.id);
+    if (!q) continue;
+    html += `<div class="wrong-item" onclick="startWrongPractice(${i})">`;
+    html += `<span class="w-num">${i+1}.</span>`;
+    html += `<span class="w-stem">${escapeHtml(q.stem).substring(0, 50)}</span>`;
+    html += `<span class="w-cat">${w.catName || ''}</span>`;
+    html += `<button class="btn btn-outline btn-sm" onclick="event.stopPropagation();deleteWrongItem('${w.id}')">✕</button>`;
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">';
+  html += '<button class="btn btn-primary" onclick="startAllWrongPractice()">🔁 重做全部</button>';
+  html += '<button class="btn btn-outline" onclick="clearAllWrong()">🗑 清空错题本</button>';
+  html += '<button class="btn btn-outline" onclick="goHome()">返回首页</button>';
+  html += '</div></div>';
+
+  container.innerHTML = html;
+}
+
+function startWrongPractice(index) {
+  const data = loadData();
+  const wrongQs = [];
+  for (const w of [...data.wrongBook].reverse()) {
+    const q = findQuestion(w.id);
+    if (q) wrongQs.push(q);
+  }
+  startPractice('all', wrongQs);
+  appState.currentIndex = Math.min(index, wrongQs.length - 1);
+  appState.wrongPracticeMode = true;
+  appState.selectedAnswer = null;
+  appState.revealed = false;
+  renderCurrentView();
+}
+
+function startAllWrongPractice() {
+  const data = loadData();
+  const wrongQs = [];
+  for (const w of data.wrongBook) {
+    const q = findQuestion(w.id);
+    if (q) wrongQs.push(q);
+  }
+  if (wrongQs.length === 0) { showToast('错题本为空！'); return; }
+  startPractice('all', wrongQs);
+  appState.wrongPracticeMode = true;
+}
+
+function deleteWrongItem(globalId) {
+  removeWrong(globalId);
+  showWrongBook();
+}
+
+function clearAllWrong() {
+  if (confirm('确定要清空全部错题吗？此操作不可撤销。')) {
+    const data = loadData();
+    data.wrongBook = [];
+    saveData(data);
+    updateWrongCount();
+    showWrongBook();
+  }
+}
+
+// ============================================================
+// Utilities
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+document.addEventListener('gestureend', function(e) { e.preventDefault(); });
+
+// ============================================================
+// Dark Mode
+// ============================================================
+const DARK_KEY = 'anb_dark_mode';
+function isDark() {
+  const saved = localStorage.getItem(DARK_KEY);
+  if (saved !== null) return saved === '1';
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches;
+}
+function applyTheme(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.querySelector('meta[name="theme-color"]').content = dark ? '#1e293b' : '#2563eb';
+  var btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = dark ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  var d = !isDark();
+  localStorage.setItem(DARK_KEY, d ? '1' : '0');
+  applyTheme(d);
+}
+
+// ============================================================
+// Confetti Celebration
+// ============================================================
+function launchConfetti() {
+  var canvas = document.getElementById('confettiCanvas');
+  var ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  var particles = [];
+  var colors = ['#2563eb','#16a34a','#f59e0b','#dc2626','#7c3aed','#ec4899','#06b6d4','#f97316'];
+  for (var i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 8 + 4,
+      h: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 3,
+      vy: Math.random() * 4 + 2,
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 10,
+      opacity: 1,
+    });
+  }
+  var frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.rotation += p.rotSpeed;
+      if (frame > 60) p.opacity -= 0.02;
+      if (p.opacity <= 0) continue;
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    frame++;
+    if (frame < 150 && particles.some(function(p) { return p.opacity > 0; })) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// ============================================================
+// Statistics View
+// ============================================================
+function showStats() {
+  appState.view = 'stats';
+  document.getElementById('headerActions').classList.add('hidden');
+  renderCurrentView();
+}
+
+function renderStatsView(container) {
+  var data = loadData();
+  var bank = window.QUESTION_BANK;
+  var totalDone = 0, totalCorrect = 0, totalQ = bank.totalQuestions;
+
+  var catStats = [];
+  for (var i = 0; i < bank.categories.length; i++) {
+    var cat = bank.categories[i];
+    var prog = data.progress[cat.id] || { doneIds: {}, correct: 0, total: 0 };
+    var done = Object.keys(prog.doneIds).length;
+    totalDone += done;
+    totalCorrect += prog.correct || 0;
+    catStats.push({ name: cat.name, total: cat.questionCount, done: done, correct: prog.correct || 0, total_ans: prog.total || 0 });
+  }
+
+  var overallPct = totalQ > 0 ? Math.round(totalDone / totalQ * 100) : 0;
+  var correctRate = totalDone > 0 ? Math.round(totalCorrect / totalDone * 100) : 0;
+
+  var html = '';
+
+  // Hero
+  html += '<div class="stats-hero">';
+  html += '<div class="hero-num">' + overallPct + '%</div>';
+  html += '<div class="hero-label">总体完成度 · ' + totalDone + ' / ' + totalQ + ' 题</div>';
+  html += '</div>';
+
+  // Stats boxes
+  html += '<div class="stats-grid">';
+  html += '<div class="stat-box"><div class="s-val">' + totalDone + '</div><div class="s-lbl">已做题目</div></div>';
+  html += '<div class="stat-box"><div class="s-val">' + correctRate + '%</div><div class="s-lbl">正确率</div></div>';
+  html += '<div class="stat-box"><div class="s-val">' + Object.keys(data.wrongBook || {}).reduce(function(s,w){return s+(w&&1)},0) + '</div><div class="s-lbl">错题本</div></div>';
+  html += '<div class="stat-box"><div class="s-val">' + bank.categories.length + '</div><div class="s-lbl">题库数量</div></div>';
+  html += '</div>';
+
+  // Per-category bars
+  html += '<div class="card"><div class="stats-section"><h3>📊 各题库完成进度</h3>';
+  for (var i = 0; i < catStats.length; i++) {
+    var cs = catStats[i];
+    var pct = cs.total > 0 ? Math.round(cs.done / cs.total * 100) : 0;
+    var cRate = cs.total_ans > 0 ? Math.round(cs.correct / cs.total_ans * 100) : 0;
+    var fillClass = pct >= 80 ? 'fill-green' : pct >= 40 ? 'fill-blue' : 'fill-orange';
+    html += '<div class="stat-row">';
+    html += '<span class="sr-name">' + escapeHtml(cs.name.substring(0,12)) + '</span>';
+    html += '<span class="sr-bar"><span class="sr-fill ' + fillClass + '" style="width:' + pct + '%"></span></span>';
+    html += '<span class="sr-num">' + cs.done + '/' + cs.total + ' (' + pct + '%)</span>';
+    html += '</div>';
+  }
+  html += '</div></div>';
+
+  // Wrong book quick access
+  html += '<div class="card text-center">';
+  html += '<button class="btn btn-primary mr-8" onclick="goHome()">🏠 返回首页</button>';
+  html += '<button class="btn btn-outline" onclick="showWrongBook()" style="margin-left:8px">📋 查看错题本</button>';
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// Search
+// ============================================================
+var _searchResults = null;
+function renderSearchBar() {
+  return '<div class="search-wrapper">' +
+    '<span class="s-icon">🔍</span>' +
+    '<input type="text" id="searchInput" placeholder="搜索题目关键词..." oninput="onSearchInput(this.value)" autocomplete="off">' +
+    '<button class="s-clear" id="searchClear" onclick="clearSearch()">✕</button>' +
+    '</div>';
+}
+
+function onSearchInput(val) {
+  var clearBtn = document.getElementById('searchClear');
+  if (!clearBtn) return;
+  if (val.trim().length > 0) {
+    clearBtn.style.display = 'block';
+    performSearch(val.trim());
+  } else {
+    clearBtn.style.display = 'none';
+    _searchResults = null;
+    renderHomeView(document.getElementById('mainContent'));
+  }
+}
+
+function performSearch(query) {
+  var results = [];
+  var bank = window.QUESTION_BANK;
+  var ql = query.toLowerCase();
+  for (var i = 0; i < bank.categories.length; i++) {
+    var cat = bank.categories[i];
+    for (var j = 0; j < cat.questions.length; j++) {
+      var q = cat.questions[j];
+      if (q.stem.toLowerCase().indexOf(ql) >= 0 ||
+          (q.options || []).some(function(o){return o.toLowerCase().indexOf(ql) >= 0}) ||
+          (q.scenario || '').toLowerCase().indexOf(ql) >= 0) {
+        results.push({ question: q, catName: cat.name, catId: cat.id });
+      }
+    }
+  }
+  _searchResults = results;
+  if (results.length > 0) {
+    showSearchResults(results);
+  } else {
+    document.getElementById('mainContent').innerHTML =
+      '<div class="empty-state"><div class="icon">🔍</div><div class="msg">未找到匹配的题目</div>' +
+      '<button class="btn btn-outline mt-16" onclick="clearSearch()">返回首页</button></div>';
+  }
+}
+
+function showSearchResults(results) {
+  var html = '<div class="card"><div class="card-header">🔍 搜索到 ' + results.length + ' 道题目</div>';
+  html += '<div style="max-height:70vh;overflow-y:auto">';
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    var typeLabels = { single: '单选', multiple: '多选', judge: '判断', case: '案例' };
+    var typeLbl = typeLabels[r.question.type] || '未知';
+    html += '<div class="wrong-item" onclick="startSearchPractice(' + i + ')" style="cursor:pointer">';
+    html += '<span class="w-num">#' + (i + 1) + '</span>';
+    html += '<span class="w-stem">[' + typeLbl + '] ' + escapeHtml(r.question.stem).substring(0, 60) + '</span>';
+    html += '<span class="w-cat">' + escapeHtml(r.catName) + '</span>';
+    html += '</div>';
+  }
+  html += '</div></div>';
+  html += '<button class="btn btn-outline mt-8" style="width:100%" onclick="clearSearch()">🏠 返回首页</button>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function startSearchPractice(idx) {
+  if (!_searchResults || idx >= _searchResults.length) return;
+  var questions = [];
+  for (var i = idx; i < _searchResults.length; i++) {
+    questions.push(_searchResults[i].question);
+  }
+  for (var j = 0; j < idx; j++) {
+    questions.push(_searchResults[j].question);
+  }
+  startPractice('search', questions, 0);
+}
+
+function clearSearch() {
+  _searchResults = null;
+  goHome();
+}
+
+// ============================================================
+// Keyboard Shortcuts
+// ============================================================
+function showKbdModal() {
+  var shortcuts = [
+    ['下一题', '→ 或 J'],
+    ['上一题', '← 或 K'],
+    ['选择选项', 'A / B / C / D'],
+    ['确认多选', 'Enter'],
+    ['显示答案', 'Space'],
+    ['搜索题目', '/'],
+    ['切换暗色', 'D (首页)'],
+    ['错题本', 'W'],
+    ['统计面板', 'S (首页)'],
+    ['返回首页', 'Esc'],
+    ['帮助', '?'],
+  ];
+  var html = '<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()">';
+  html += '<div class="modal-title">⌨️ 键盘快捷键</div>';
+  html += '<div class="kbd-grid">';
+  for (var i = 0; i < shortcuts.length; i++) {
+    html += '<div class="kbd-row"><span class="kbd-desc">' + shortcuts[i][0] + '</span>';
+    html += '<span class="kbd-keys">';
+    var keys = shortcuts[i][1].split(' 或 ');
+    for (var k = 0; k < keys.length; k++) {
+      html += '<span class="kbd-key">' + keys[k].trim() + '</span>';
+      if (k < keys.length - 1) html += '<span style="color:var(--text-muted);margin:0 2px">/</span>';
+    }
+    html += '</span></div>';
+  }
+  html += '</div>';
+  html += '<button class="btn btn-primary mt-16" style="width:100%" onclick="closeModal()">关闭</button>';
+  html += '</div></div>';
+  var overlay = document.createElement('div');
+  overlay.id = 'kbdModal';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+}
+
+function closeModal() {
+  var m = document.getElementById('kbdModal');
+  if (m) m.remove();
+}
+
+// ============================================================
+// Enhanced keyboard handler
+// ============================================================
+(function() {
+  var origHandler = document.onkeydown;
+  document.addEventListener('keydown', function(e) {
+    // Global shortcuts (home screen only)
+    if (appState.view === 'home') {
+      if (e.key === 'd' || e.key === 'D') {
+        if (!e.target.closest('input')) { toggleTheme(); return; }
+      }
+      if (e.key === 's' || e.key === 'S') {
+        if (!e.target.closest('input')) { showStats(); return; }
+      }
+      if (e.key === 'w' || e.key === 'W') {
+        if (!e.target.closest('input')) { showWrongBook(); return; }
+      }
+      if (e.key === '/') {
+        e.preventDefault();
+        var si = document.getElementById('searchInput');
+        if (si) si.focus();
+        return;
+      }
+    }
+    // Practice mode shortcuts
+    if (appState.view === 'practice' || appState.view === 'exam') {
+      var isInput = e.target.closest('input') || e.target.closest('textarea') || e.target.closest('select');
+      if (e.key === 'ArrowRight' || e.key === 'j' || e.key === 'J') {
+        if (!isInput) { e.preventDefault(); nextQuestion(); return; }
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'k' || e.key === 'K') {
+        if (!isInput) { e.preventDefault(); prevQuestion(); return; }
+      }
+      if ((e.key === ' ' || e.key === 'Spacebar') && appState.revealed) {
+        if (!isInput) { e.preventDefault(); nextQuestion(); return; }
+      }
+      if ((e.key === ' ' || e.key === 'Spacebar') && !appState.revealed) {
+        if (!isInput) { e.preventDefault(); confirmAnswer(); return; }
+      }
+      if ((e.key === 'Enter') && !appState.revealed) {
+        if (!isInput) { e.preventDefault(); confirmAnswer(); return; }
+      }
+      if ((e.key === 'Enter') && appState.revealed) {
+        if (!isInput) { e.preventDefault(); nextQuestion(); return; }
+      }
+      if (!appState.revealed && !isInput) {
+        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var q = appState.questions[appState.currentIndex];
+        if (q) {
+          var li = labels.indexOf(e.key.toUpperCase());
+          if (li >= 0 && li < q.options.length) {
+            e.preventDefault();
+            selectAnswer(e.key.toUpperCase(), q.type === 'multiple');
+          }
+        }
+      }
+    }
+    if (e.key === 'Escape') {
+      var modal = document.getElementById('kbdModal');
+      if (modal) { closeModal(); return; }
+      var sheet = document.getElementById('answerSheetModal');
+      if (sheet) { closeAnswerSheet(); return; }
+      if (appState.view !== 'home') { e.preventDefault(); goHome(); return; }
+    }
+    if (e.key === '?' && !e.target.closest('input')) {
+      e.preventDefault(); showKbdModal(); return;
+    }
+  });
+})();
+
+// ============================================================
+// View transition wrapper
+// ============================================================
+(function() {
+  var origRender = renderCurrentView;
+  renderCurrentView = function() {
+    var container = document.getElementById('mainContent');
+    container.classList.add('view-switching');
+    setTimeout(function() {
+      origRender();
+      container.classList.remove('view-switching');
+    }, 150);
+  };
+})();
+
+// ============================================================
+// Service Worker Registration
+// ============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(() => {
+      console.log('SW registered');
+    }).catch(() => {
+      // Not critical
+    });
+  });
+}
+
+// ============================================================
+// Init
+// ============================================================
+function init() {
+  applyTheme(isDark());
+  updateWrongCount();
+  renderCurrentView();
+}
+</script>
+
+</body>
+</html>
