@@ -465,6 +465,13 @@ body{
 
 <!-- ========== Main Content ========== -->
 <div class="main-container" id="mainContent">
+  <div id="loadingScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;color:var(--gray-500)">
+    <div style="font-size:48px;margin-bottom:16px">📝</div>
+    <div style="font-size:16px;font-weight:600;margin-bottom:8px">加载题库数据中...</div>
+    <div style="font-size:13px" id="loadingProgress">0%</div>
+    <div style="width:200px;height:4px;background:var(--gray-200);border-radius:2px;margin-top:12px;overflow:hidden">
+      <div id="loadingBar" style="height:100%;background:var(--primary);border-radius:2px;width:0%;transition:width .3s"></div>
+    </div>
   </div>
 </div>
 
