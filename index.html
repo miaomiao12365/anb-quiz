@@ -477,70 +477,77 @@ body{
 
 
 <script>
-// Chunk-based data loader - loads categories one by one
 window.QUESTION_BANK_CHUNKS = {};
-var _CHUNK_IDS = ["b_danxuan", "b_duoxuan", "b_panduan", "tech_单选", "tech_多选", "tech_判断", "tech_案例", "law_单选", "law_多选", "law_判断", "law_案例", "management_单选", "management_多选", "management_判断", "management_案例"];
-var _CHUNK_TOTAL = _CHUNK_IDS.length;
+var _CHUNK_MAP = {"0": {"catId": "b_danxuan", "file": "chunk_0.js"}, "1": {"catId": "b_duoxuan", "file": "chunk_1.js"}, "2": {"catId": "b_panduan", "file": "chunk_2.js"}, "3": {"catId": "tech_单选", "file": "chunk_3.js"}, "4": {"catId": "tech_多选", "file": "chunk_4.js"}, "5": {"catId": "tech_判断", "file": "chunk_5.js"}, "6": {"catId": "tech_案例", "file": "chunk_6.js"}, "7": {"catId": "law_单选", "file": "chunk_7.js"}, "8": {"catId": "law_多选", "file": "chunk_8.js"}, "9": {"catId": "law_判断", "file": "chunk_9.js"}, "10": {"catId": "law_案例", "file": "chunk_10.js"}, "11": {"catId": "management_单选", "file": "chunk_11.js"}, "12": {"catId": "management_多选", "file": "chunk_12.js"}, "13": {"catId": "management_判断", "file": "chunk_13.js"}, "14": {"catId": "management_案例", "file": "chunk_14.js"}};
+var _CHUNK_TOTAL = 15;
 var _CHUNK_LOADED = 0;
 var _CHUNK_FAILED = [];
 
+function showError(msg) {
+  document.getElementById('loadingScreen').innerHTML =
+    '<div style="text-align:center;padding:30px">' +
+    '<div style="font-size:48px;margin-bottom:12px">&#9888;</div>' +
+    '<div style="font-size:16px;font-weight:600;margin-bottom:8px">加载出错</div>' +
+    '<div style="font-size:13px;color:#dc2626;margin:6px;word-break:break-all">' + msg + '</div>' +
+    '<div style="font-size:12px;color:#999">已加载: ' + _CHUNK_LOADED + '/' + _CHUNK_TOTAL + ' | 失败: ' + _CHUNK_FAILED.length + '</div>' +
+    '<button class="btn btn-primary" onclick="location.reload()" style="margin-top:10px">&#8635; 重试</button>' +
+    '</div>';
+}
+
 function loadChunk(index) {
   if (index >= _CHUNK_TOTAL) {
-    // All loaded - assemble
     assembleBank();
     return;
   }
-  var catId = _CHUNK_IDS[index];
-  var script = document.createElement('script');
-  script.src = 'chunk_' + catId + '.js';
-  script.onload = function() {
+  var info = _CHUNK_MAP[index.toString()];
+  if (!info) { loadChunk(index + 1); return; }
+  var s = document.createElement('script');
+  s.src = info.file;
+  s.onload = function() {
     _CHUNK_LOADED++;
     var pct = Math.round(_CHUNK_LOADED / _CHUNK_TOTAL * 100);
     document.getElementById('loadingProgress').textContent = pct + '% (' + _CHUNK_LOADED + '/' + _CHUNK_TOTAL + ')';
     document.getElementById('loadingBar').style.width = pct + '%';
     loadChunk(index + 1);
   };
-  script.onerror = function() {
-    _CHUNK_FAILED.push(catId);
-    // Try next chunk anyway
+  s.onerror = function() {
+    _CHUNK_FAILED.push(info.file);
     loadChunk(index + 1);
   };
-  document.head.appendChild(script);
+  document.head.appendChild(s);
 }
 
 function assembleBank() {
-  var categories = [];
-  for (var i = 0; i < _CHUNK_IDS.length; i++) {
-    var catId = _CHUNK_IDS[i];
-    var catData = QUESTION_BANK_CHUNKS[catId];
-    if (catData) {
-      categories.push(catData);
+  try {
+    var categories = [];
+    var order = [];
+    for (var k in _CHUNK_MAP) order.push(parseInt(k));
+    order.sort(function(a,b){return a-b});
+    for (var i = 0; i < order.length; i++) {
+      var info = _CHUNK_MAP[order[i].toString()];
+      if (!info) continue;
+      var cd = QUESTION_BANK_CHUNKS[info.catId];
+      if (cd) categories.push(cd);
     }
+    if (categories.length === 0) {
+      showError('所有题库加载失败，请检查网络后刷新');
+      return;
+    }
+    var tq = 0;
+    for (var j = 0; j < categories.length; j++) {
+      tq += categories[j].questionCount || categories[j].questions.length;
+    }
+    window.QUESTION_BANK = {version:'2.0',totalQuestions:tq,categories:categories};
+    document.getElementById('loadingScreen').style.display = 'none';
+    try { init(); } catch(ie) {
+      document.getElementById('loadingScreen').style.display = 'flex';
+      showError('Init error: ' + (ie.message || ie));
+    }
+  } catch(e) {
+    showError('Assemble error: ' + (e.message || e));
   }
-  if (categories.length === 0) {
-    document.getElementById('loadingScreen').innerHTML =
-      '<div style="text-align:center;padding:40px">' +
-      '<div style="font-size:48px;margin-bottom:16px">&#9888;</div>' +
-      '<div style="font-size:16px;font-weight:600">加载失败</div>' +
-      '<div style="font-size:13px;color:#999;margin:8px">所有题库文件加载失败，请检查网络</div>' +
-      '<button class="btn btn-primary" onclick="location.reload()" style="margin-top:12px">&#8635; 重试</button>' +
-      '</div>';
-    return;
-  }
-  var totalQ = 0;
-  for (var j = 0; j < categories.length; j++) {
-    totalQ += categories[j].questionCount || categories[j].questions.length;
-  }
-  window.QUESTION_BANK = {
-    version: '2.0',
-    totalQuestions: totalQ,
-    categories: categories
-  };
-  document.getElementById('loadingScreen').style.display = 'none';
-  init();
 }
 
-// Start loading
 document.getElementById('loadingProgress').textContent = '0% (0/' + _CHUNK_TOTAL + ')';
 loadChunk(0);
 </script>
