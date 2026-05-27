@@ -507,16 +507,20 @@ function _assemble(){
   if(cats.length===0){_show('All chunks failed','#dc2626');return;}
   var t=0;for(var k=0;k<cats.length;k++)t+=cats[k].questionCount||cats[k].questions.length;
   window.QUESTION_BANK={version:'2.0',totalQuestions:t,categories:cats};
-  _show('QBank OK. Functions: renderHomeView='+(typeof renderHomeView)+' renderCurrentView='+(typeof renderCurrentView)+' init='+(typeof init),'#16a34a');
+  _show('QBank OK: renderHomeView='+(typeof renderHomeView)+' init='+(typeof init),'#16a34a');
 
-  // Step 1: Test basic DOM
   var mc=document.getElementById('mainContent');
   mc.innerHTML='<div style="padding:40px;margin:20px;text-align:center;background:#fff;border-radius:10px;font-family:sans-serif"><h2 style="color:#2563eb">DOM Test OK</h2><p>'+t+' questions in '+cats.length+' categories</p></div>';
 
-  // Step 2: Now try renderHomeView after a delay
   setTimeout(function(){
-    if(typeof renderHomeView==='function'){
+    if(typeof renderHomeView!=='function')return;
+    try{
+      var before=mc.innerHTML.length;
       renderHomeView(mc);
+      var after=mc.innerHTML.length;
+      mc.innerHTML='<div style="padding:10px;margin:10px;background:#fffbeb;border-radius:6px;text-align:center;font-size:13px;font-family:sans-serif">renderHomeView: before='+before+' after='+after+' changed='+(before!==after)+'</div>'+mc.innerHTML;
+    }catch(e){
+      mc.innerHTML='<div style="padding:40px;margin:20px;background:#fff;border-radius:10px;text-align:center;font-family:sans-serif"><h2 style="color:#dc2626">renderHomeView Error</h2><p>'+e.message+'</p><p>stack: '+(e.stack||'none').substring(0,300)+'</p></div>';
     }
   },1000);
  }catch(e){_show('Ex: '+(e.message||e),'#dc2626');}
