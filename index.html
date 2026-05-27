@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#2563eb">
 <title>安B考试刷题练习</title>
 <style>
+
 /* ========== Reset & Variables ========== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -441,10 +442,10 @@ body{
 .mb-12{margin-bottom:12px}
 .flex-center{display:flex;align-items:center;justify-content:center}
 .gap-8{gap:8px}
+
 </style>
 </head>
 <body>
-
 <!-- ========== Header ========== -->
 <header class="app-header">
   <div class="header-inner">
@@ -473,8 +474,6 @@ body{
     </div>
   </div>
 </div>
-
-
 
 <script>
 // ============================================================
@@ -1713,19 +1712,6 @@ function closeModal() {
 })();
 
 // ============================================================
-// Service Worker Registration
-// ============================================================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(() => {
-      console.log('SW registered');
-    }).catch(() => {
-      // Not critical
-    });
-  });
-}
-
-// ============================================================
 // Init
 // ============================================================
 function init() {
@@ -1737,59 +1723,47 @@ function init() {
 
 <script>
 window.CHUNKS={};var _CID=["b_danxuan", "b_duoxuan", "b_panduan", "tech_单选", "tech_多选", "tech_判断", "tech_案例", "law_单选", "law_多选", "law_判断", "law_案例", "management_单选", "management_多选", "management_判断", "management_案例"];var _N=15;var _DONE=0;var _FAILED=[];
-
-function _show(msg,color){
-  var ls=document.getElementById('loadingScreen');
-  if(!ls)return;
-  ls.style.display='flex';
-  ls.style.flexDirection='column';
-  ls.style.alignItems='center';
-  ls.style.justifyContent='center';
-  ls.style.height='60vh';
-  ls.style.color='#333';
-  ls.style.fontFamily='-apple-system,sans-serif';
-  ls.style.padding='20px';
-  ls.innerHTML='<div style="font-size:18px;font-weight:600;margin:8px;color:'+(color||'#2563eb')+'">'+msg+'</div>';
+function _show(m,c){
+ var ls=document.getElementById('loadingScreen');
+ if(!ls)return;
+ ls.innerHTML='<div style="font-size:18px;font-weight:600;color:'+(c||'#2563eb')+'">'+m+'</div>';
+ if(_FAILED.length>0)ls.innerHTML+='<div style="font-size:12px;color:#999;margin-top:8px">Failed chunks: '+_FAILED.join(',')+'</div>';
+ ls.innerHTML+='<button onclick="location.reload()" style="padding:10px 20px;margin-top:16px;font-size:15px;background:#2563eb;color:#fff;border:none;border-radius:6px">Retry</button>';
 }
-
 function _load(i){
-  if(i>=_N){_assemble();return;}
-  var s=document.createElement('script');
-  s.src='chunk_'+i+'.js?v='+Date.now();
-  s.onload=function(){
-    _DONE++;var p=Math.round(_DONE/_N*100);
-    var bar=document.getElementById('loadingBar'),txt=document.getElementById('loadingProgress');
-    if(bar)bar.style.width=p+'%';
-    if(txt)txt.textContent=p+'% ('+_DONE+'/'+_N+')';
-    _load(i+1);
-  };
-  s.onerror=function(){_FAILED.push(i);_load(i+1);};
-  document.head.appendChild(s);
+ if(i>=_N){_assemble();return;}
+ var s=document.createElement('script');
+ s.src='chunk_'+i+'.js';
+ s.onload=function(){
+  _DONE++;var p=Math.round(_DONE/_N*100);
+  var bar=document.getElementById('loadingBar'),txt=document.getElementById('loadingProgress');
+  if(bar)bar.style.width=p+'%';
+  if(txt)txt.textContent=p+'% ('+_DONE+'/'+_N+')';
+  _load(i+1);
+ };
+ s.onerror=function(){_FAILED.push(i);_load(i+1);};
+ document.head.appendChild(s);
 }
-
 function _assemble(){
-  _show('Assembling ' + _CID.length + ' categories... DONE=' + _DONE + ' FAILED=' + _FAILED.length, '#2563eb');
-  try{
-    var cats=[];
-    for(var j=0;j<_CID.length;j++){
-      var d=window.CHUNKS[_CID[j]];
-      if(d)cats.push(d);
-    }
-    if(cats.length===0){_show('All chunks failed! Loaded:'+_DONE+' Failed:'+_FAILED.length,'#dc2626');return;}
-    var t=0;
-    for(var k=0;k<cats.length;k++)t+=cats[k].questionCount||cats[k].questions.length;
-    _show('Got ' + cats.length + ' categories, ' + t + ' questions. Calling init...', '#16a34a');
-    window.QUESTION_BANK={version:'2.0',totalQuestions:t,categories:cats};
-    var ls=document.getElementById('loadingScreen');
-    if(ls)ls.style.display='none';
-    try{
-      if(typeof init!=='function'){_show('ERROR: init is not a function! type='+(typeof init),'#dc2626');return;}
-      init();
-      _show('init() completed! If you see this, the app failed to render.','#f59e0b');
-    }catch(ie){_show('init() threw: '+(ie.message||ie),'#dc2626');}
-  }catch(e){_show('Assemble error: '+(e.message||e),'#dc2626');}
+ _show('Assembling...');
+ try{
+  var cats=[];
+  for(var j=0;j<_CID.length;j++){var d=window.CHUNKS[_CID[j]];if(d)cats.push(d);}
+  if(cats.length===0){_show('All failed','#dc2626');return;}
+  var t=0;for(var k=0;k<cats.length;k++)t+=cats[k].questionCount||cats[k].questions.length;
+  _show('Got '+cats.length+' cats, '+t+' questions. Calling init...','#16a34a');
+  window.QUESTION_BANK={version:'2.0',totalQuestions:t,categories:cats};
+  var ls=document.getElementById('loadingScreen');
+  if(ls)ls.style.display='none';
+  if(typeof init!=='function'){_show('ERROR: init not a function (type='+(typeof init)+')','#dc2626');return;}
+  init();
+  setTimeout(function(){
+   if(document.getElementById('mainContent')&&document.getElementById('mainContent').innerHTML.trim()===''){
+    _show('Page empty after init!','#f59e0b');
+   }
+  },1000);
+ }catch(e){_show('Error: '+(e.message||e),'#dc2626');}
 }
-
 document.getElementById('loadingProgress').textContent='0% (0/'+_N+')';
 _load(0);
 </script>
