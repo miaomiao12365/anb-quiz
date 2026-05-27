@@ -507,18 +507,18 @@ function _assemble(){
   if(cats.length===0){_show('All chunks failed','#dc2626');return;}
   var t=0;for(var k=0;k<cats.length;k++)t+=cats[k].questionCount||cats[k].questions.length;
   window.QUESTION_BANK={version:'2.0',totalQuestions:t,categories:cats};
-  _show('QBank OK. renderHomeView='+(typeof renderHomeView)+' renderCurrentView='+(typeof renderCurrentView)+' init='+(typeof init),'#16a34a');
-  var ls=document.getElementById('loadingScreen');if(ls)ls.style.display='none';
-  // Try calling renderHomeView directly, bypassing init/renderCurrentView/view-transition-wrapper
-  try{
+  _show('QBank OK. Functions: renderHomeView='+(typeof renderHomeView)+' renderCurrentView='+(typeof renderCurrentView)+' init='+(typeof init),'#16a34a');
+
+  // Step 1: Test basic DOM
+  var mc=document.getElementById('mainContent');
+  mc.innerHTML='<div style="padding:40px;margin:20px;text-align:center;background:#fff;border-radius:10px;font-family:sans-serif"><h2 style="color:#2563eb">DOM Test OK</h2><p>'+t+' questions in '+cats.length+' categories</p></div>';
+
+  // Step 2: Now try renderHomeView after a delay
+  setTimeout(function(){
     if(typeof renderHomeView==='function'){
-      renderHomeView(document.getElementById('mainContent'));
-      setTimeout(function(){
-        var mc=document.getElementById('mainContent');
-        if(mc&&mc.textContent.replace(/\s/g,'')==='')_show('Still empty!','#f59e0b');
-      },1000);
-    }else{_show('renderHomeView='+(typeof renderHomeView),'#dc2626');}
-  }catch(e){_show('renderHomeView threw: '+(e.message||e),'#dc2626');}
+      renderHomeView(mc);
+    }
+  },1000);
  }catch(e){_show('Ex: '+(e.message||e),'#dc2626');}
 }
 document.getElementById('loadingProgress').textContent='0% (0/'+_N+')';
